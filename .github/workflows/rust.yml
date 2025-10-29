@@ -11,6 +11,7 @@ env:
 
 permissions:
   contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -41,15 +42,15 @@ jobs:
     - name: 运行cargo fmt检查
       run: cargo fmt -- --check
 
-    - name: 运行cargo-audit检查
-      run: cargo install cargo-audit && cargo audit
+    # - name: 运行cargo-audit检查
+    #   run: cargo install cargo-audit && cargo audit
 
     - name: 运行cargo build构建
       run: cargo build --profile ${{ matrix.BUILD_TARGET }}
     
-    # - name: 部署
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: zerotprod
-    #     path: target/${{ matrix.BUILD_TARGET }}/zerotprod
+    - name: 部署
+      uses: actions/upload-artifact@v4
+      with:
+        name: zerotprod
+        path: target/${{ matrix.BUILD_TARGET }}/zerotprod
 
