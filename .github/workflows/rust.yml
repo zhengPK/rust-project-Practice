@@ -52,5 +52,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: zerotprod
-        path: target/${{ matrix.BUILD_TARGET }}/zerotprod
+        path: target/${{ matrix.BUILD_TARGET }}
 
