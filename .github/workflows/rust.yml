@@ -19,7 +19,7 @@ jobs:
         BUILD_TARGET: [release]
     outputs:
       release_built: ${{ steps.set-output.outputs.release_built }}
-      
+
     steps:
     - name: 缓存Cache
       uses: actions/cache@v4
@@ -42,14 +42,14 @@ jobs:
       run: cargo fmt -- --check
 
     - name: 运行cargo-audit检查
-      run: cargo audit
+      run: cargo install cargo-audit && cargo audit
 
     - name: 运行cargo build构建
       run: cargo build --profile ${{ matrix.BUILD_TARGET }}
     
-    - name: 部署
-      uses: actions/upload-artifact@v4
-      with:
-        name: zerotprod
-        path: target/${{ matrix.BUILD_TARGET }}/zerotprod
+    # - name: 部署
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: zerotprod
+    #     path: target/${{ matrix.BUILD_TARGET }}/zerotprod
 
