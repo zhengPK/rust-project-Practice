@@ -1,4 +1,4 @@
-name: Rust
+name: Rust项目ci
 
 on:
   push:
@@ -9,15 +9,48 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+permissions:
+  contents: write
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+    matrix:
+      BUILD_TARGET: [release] # refers to a cargo profile
+    outputs:
+      release_built: ${{ steps.set-output.outputs.release_built }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Run tests
+    
+
+    - name: 缓存Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: 读取仓库内容
+      uses: actions/checkout@v5
+    - name: 运行cargo tests测试
       run: cargo test --verbose
-    - name: Build
-      run: cargo build --verbose
-  
+
+    - name: 运行cargo clippy检查
+      run: cargo clippy -- -D warnings
+
+    - name: 运行cargo fmt检查
+      run: cargo fmt -- --check
+
+    - name: 运行cargo-audit检查
+      run: cargo audit
+
+    - name: 运行cargo build构建
+      run: cargo build --profile ${{ matrix.BUILD_TARGET }}
+    
+    - name: 部署
+      uses: actions/upload-artifact@v4
+      with:
+        name: zerotprod
+        path: target/${{ matrix.BUILD_TARGET }}/zerotprod
+
